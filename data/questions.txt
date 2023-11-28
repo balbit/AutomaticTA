@@ -1,0 +1,27 @@
+import json
+
+data = []
+
+# Dictionary 1
+dict1 = {
+    "class": "18.650",
+    "question": "Convergence Results when dividing\n\nThe review sheet mentions knowing convergence results when adding, multiplying, and dividing. However, I only see the textbook only talking about adding and multiplying. (Theorem 5.5)\n\nWhat are the results that we should be familiar with for division?"
+}
+data.append(dict1)
+
+# Dictionary 2
+dict2 = {
+    "class": "18.650",
+    "question": "Ps2 p3: Unclear goal\n\nIf we manage to show that the variance goes to zero as n goes to infinity, is that it? Would the answer just be zero? Or are we asked about a distribution of a normalized form of the expressions?"
+}
+data.append(dict2)
+
+# Dictionary 3
+dict3 = {
+    "class": "18.650",
+    "question": "Problemset 2, Q3\n\nWhat is being asked of us here? I assume it means, apply CLT on every single part, where as part of applying CLT, give the variance or covariance matrix.\n\nI also assume for part 1, it just wants us to do it for each of \(X_n\) and \(Y_n\) separately?"
+}
+data.append(dict3)
+
+json_data = json.dumps(data)
+print(json_data)

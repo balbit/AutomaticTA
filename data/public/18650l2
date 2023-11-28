@@ -1,0 +1,133 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{geometry}%[margin=1.2in]
+\usepackage{amssymb}
+\usepackage{amsthm,bbm,bm}
+\usepackage{epsfig}
+\usepackage{setspace}
+\usepackage{graphicx, xcolor, hyperref, wrapfig, float}
+\setstretch{1.2}
+\geometry{
+    textheight=9in,
+    textwidth=5.5in,
+    top=1in,
+    headheight=12pt,
+    headsep=25pt,
+    footskip=30pt
+}
+\input{commands.tex}
+
+\begin{document}
+
+\lecture{2 --- September 8, 2023}{Fall 2023}{Prof. Philippe Rigollet}{Anya Katsevich}
+
+\section{Basic data visualization: the histogram} 
+Suppose $x_1,\dots,x_n$ are the GPAs of the students in this class (we have $n=130$). We can visualize the distribution of GPAs with a histogram. \\
+
+\begin{figure}[h]
+    \center
+    \includegraphics[scale=0.1]{Images/histogram.png}
+\end{figure}
+
+\begin{itemize}
+\item The area of the rectangle above $[a,b)$ is the proportion of GPAs between $a$ and $b$:
+\beq
+\text{area}= \frac1n\sum_{i=1}^n\mathbbm{1}(a\leq x_i < b),
+\eeq where $\mathbbm{1}(\cdot)$ is called an \emph{indicator} function. It evaluates to 1 if the statement inside the parentheses is true and it evaluates to 0 if the statement is false.
+\item Since $\text{area}=(b-a)\times\text{height}$, we get the height of the column by dividing the area by $b-a$. 
+\item \textbf{Caution:} \emph{only if} the bins are equally spaced can we visually judge the proportions of GPAs in each bin by looking at the heights. If the bins are \emph{not} equally spaced then the heights don't tell us everything (a column could be unusually tall if it corresponds to a very small bin size.) 
+\end{itemize}
+\subsection{Shapes}
+We can also smooth out the histogram with a ``kernel density estimator" (KDE), which we'll learn about in December. A smoothed out histogram tells us about the \emph{shape} of the distribution; see Figure~\ref{fig:shape}.
+\begin{figure}[h]
+    \center
+    \includegraphics[scale=0.2]{Images/shapes.png}
+    \caption{Shapes a distribution can take. Is there skew? Are there one or several modes?}
+    \label{fig:shape}
+    \end{figure}
+\section{Summary statistics} We can summarize the data with a few summary statistics:
+\begin{itemize}
+\item \textbf{mean}
+\item \textbf{standard deviation}
+\item \textbf{median}
+\begin{itemize}
+\item splits the data in half: \\
+half of the data points $x_1,\dots, x_n$ are to the left and half to the right
+\item Formally: $\frac1n\sum_{i=1}^n\mathbbm{1}(x_i\leq \text{median})= 1/2$. 
+\end{itemize}
+\item \textbf{quantiles} 
+\begin{itemize}
+\item a generalization of the median
+\item \textbf{the $q_\alpha$ quantile} is a number such that $\alpha$ of the data is \emph{above} it. 
+\item Formally: $\frac1n\sum_{i=1}^n\mathbbm{1}(x_i\leq q_\alpha)= 1-\alpha$. 
+\item Important special cases: \\
+\textbf{1st quartile} $Q_1=q_{0.75}$ (3/4 of the data is to the right),\\
+ \textbf{3rd quartile} $Q_3=q_{0.25}$ (1/4 of the data is to the right).
+\item Note that $Q_1<\text{median}<Q_3$. The median is the second quartile. 
+\end{itemize}
+\item \textbf{interquantile range IQR}$=Q_3-Q_1$.
+\end{itemize}
+Figure~\ref{fig:summ} shows some of these statistics on a smoothed histogram.
+
+\begin{figure}[h]
+    \center
+    \includegraphics[scale=0.15]{Images/Densitywithsummarystats.png}
+    \caption{A smoothed histogram showing locations of the summary statistics. Note that the mean is to the right of the median because the distribution is right-skewed.}
+    \label{fig:summ}
+    \end{figure}
+    
+\subsection{Robustness}
+\emph{Outliers} are abnormally large or small values compared to the rest of the data. Formally:\\
+$$x_i \text{ is an \textbf{outlier} if}\quad x_i>Q_3+1.5\text{IQR}\quad\text{or}\quad x_i < Q_1 - 1.5\text{IQR}.$$
+
+The mean and standard deviation are strongly affected by outliers. For example, very large outliers pull the mean to the right of the median, as in Figure~\ref{fig:summ}. On the other hand, the median and IQR are robust to outliers (if the largest data point is doubled, say, this will not change the location of the median and IQR). The following table summarizes four important summary statistics.
+\begin{center}
+\begin{tabular}{ c|c } 
+ location& spread   \\  
+ \hline
+mean & std. dev.   \\ 
+\emph{median} & \emph{IQR} % $\leftarrow$ robust \\ 
+\end{tabular}
+\end{center}
+\vspace{-22pt}\hspace{260pt}$\leftarrow$ \emph{robust }
+\vspace{5pt}
+
+\section{Visualizing summary statistics}
+Another way to concisely depict summary statistics is with a \emph{box plot}, also sometimes called a ``box and whiskers" plot; see Figure~\ref{fig:box}. The left and right endpoints of the box are $Q_1,Q_3$ respectively, and a line is drawn in between to denote the location of the median. The box is our visual representation for 75\% of the data, and the location of the median between $Q_1$ and $Q_3$ conveys whether the distribution is skewed in one direction. 
+
+\begin{figure}[h]
+    \center
+    \includegraphics[scale=0.15]{Images/boxplot.png}
+    \caption{A box plot}
+    \label{fig:box}
+    \end{figure}
+
+The two line segments extending to the left and right from the box are the ``whiskers". The length of the whiskers is $1.5$IQR, so that by definition, the outliers are to the left of the left whisker and to the right of the right whisker. The locations of the outliers are indicated explicitly on the boxplot. 
+
+%`whiskers" and ``box". Conveys some sense of skew. Whiskers are drawn using the criterion for outliers. Outliers are drawn above and below the whiskers.
+\subsection{Data with multiple variables: scatterplot and comparative boxplot} So far we've only considered one-dimensional data. But we could also have e.g. pairs $(X_i, Y_i)$. For example, $X_i$ denotes the number of days a month a student smokes marijuana, and $Y_i$ denotes the student's GPA. A common way to depict such data is with a scatterplot, as in Figure~\ref{fig:scatter}. We simply plot the location of each data point in the $X$-$Y$ plane.
+\begin{figure}[H]
+    \center
+    \includegraphics[scale=0.13]{Images/scatterplot.png}
+    \caption{A scatterplot}
+    \label{fig:scatter}
+    \end{figure}
+%  \begin{wrapfigure}{r}{0.5\textwidth}\label{fig:scatter}
+%  \vspace{-7pt}
+%  \begin{center}
+%    \includegraphics[width=0.48\textwidth]{{"18.650 Lecture Notes/scatterplot"}.png}
+%  \end{center}
+%  \caption{A scatterplot}
+%\end{wrapfigure}  
+
+
+If the $X$-values tend to be clustered or if the $X$-values are not numbers at all (e.g. $X_i\in\{$freshman, sophomore, junior, senior$\}$), then we can depict the data using several boxplots for the $Y$ distributions, one for each cluster/category of $X$ values. This lets us visualize the difference in the $Y$ distributions across different $X$ values. 
+This is called a comparative boxplot; see Figure~\ref{fig:comp}. 
+\begin{figure}[h]
+    \center
+    \includegraphics[scale=0.1]{Images/compbox.png}
+    \caption{Comparative boxplots}
+    \label{fig:comp}
+    \end{figure}
+
+\end{document}
