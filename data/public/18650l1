@@ -1,0 +1,117 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{geometry}%[margin=1.2in]
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{epsfig}
+\usepackage{setspace}
+\usepackage{graphicx, xcolor, hyperref}
+\setstretch{1.2}
+\geometry{
+    textheight=9in,
+    textwidth=5.5in,
+    top=1in,
+    headheight=12pt,
+    headsep=25pt,
+    footskip=30pt
+}
+\input{commands}
+
+
+
+
+
+\begin{document}
+
+\lecture{1 --- September 6, 2023}{Fall 2023}{Prof. Philippe Rigollet}{Anya Katsevich}
+
+\section{Overview}
+
+Statistics is about \textbf{analyzing} and drawing \textbf{conclusions} from \textbf{data}. \\
+
+\noindent What methods do we use to \textbf{analyze} data?
+\begin{enumerate}
+\item descriptive statistics: numbers that summarize the data (e.g. the mean) or visual representations (e.g. histograms)
+\item estimation, confidence intervals, hypothesis testing, regression...
+\item and many more! Most of which will be covered in this class. 
+\end{enumerate}
+
+\noindent What kinds of \textbf{conclusions} can we draw?
+\begin{enumerate}
+\item make predictions (how many goals will the US women's soccer team make at the World Cup?) 
+\item answer yes/no questions (can LLMs get an MIT degree? Does blue light make you age faster?)
+\end{enumerate}
+
+\noindent What \emph{is} the \textbf{data}? \\
+Independent, identically distributed (i.i.d.) samples $X_1,X_2,\dots, X_n\sim P$, \emph{where $P$ is unknown!} (See Section~\ref{sec:kiss} for a concrete example).\\
+
+\noindent The statistics pipeline: 
+\begin{equation}
+\text{\parbox{50pt}{i.i.d. data $X_i\sim P$}}\longrightarrow \text{\fbox{\parbox{50pt}{statistical method}}} \longrightarrow 
+\hat P\approx P
+\end{equation} 
+The fields of statistics and probability are opposites in the following sense:
+\begin{enumerate}
+\item\textbf{Probability: given $P$, what can we say about data from $P$?} \\
+\emph{Example: $P=\mathcal N(0,1)$. Using probability, we can say a sample $X\sim P$ lies in the interval $(-1,1)$ with probability  $0.682$.}
+\item\textbf{Statistics: given data from $P$, what can we say about $P$?} \\
+\emph{Example: $X=100$. Using statistics, we can say $X$ is most likely \emph{not} a sample from $\mathcal N(0, 1)$, i.e. $P\neq \mathcal N(0,1)$.}
+\end{enumerate}
+
+\section{Key tools from probability}
+Though it is ``opposite" of statistics, probability is the workhorse of statistical computations. So let's review some probability fundamentals. 
+
+\subsection{Mean and variance of i.i.d. averages} Let $X_1,\dots, X_n$ be i.i.d. with $\E[X_i]=\mu$ and $\V[X_i]=\sigma^2$ (we will use the notation $\V[X]$ for variance of $X$). Then the \emph{sample mean} is
+$$\bar X_n:=\frac1n\sum_{i=1}^nX_i,$$ and 
+$$\E[\bar X_n] = \mu,\quad\V[\bar X_n]=\frac{\sigma^2}{n}.$$ 
+This comes from the following calculations (make sure you understand each step):
+\beqs
+\E[\bar X_n]&=\E\l[\frac1n\sum_{i=1}^nX_i\r]=\frac1n\sum_{i=1}^n\E[X_i] = \mu,\\ \\
+\V[\bar X_n]&=\V\l[\frac1n\sum_{i=1}^nX_i\r]=\textcolor{blue}{\frac{1}{n^2}\V\l[\sum_{i=1}^nX_i\r] = \frac{1}{n^2}\sum_{i=1}^n\V[X_i]}=\frac{n\sigma^2}{n^2}=\frac{\sigma^2}{n}.\eeqs
+The equality in blue expresses the important property that for independent variables, the \emph{sum of the variances is the variance of the sum.}
+\subsection{The Law of Large Numbers (LLN)} Together, $\E[\bar X_n]=\mu$ and $\V[\bar X_n]=\sigma^2/n$ tell us that the fluctuations of $\bar X_n$ around $\mu$ get smaller and smaller as $n\to\infty$. This is expressed by the following law of large numbers (LLN):
+$$\bar X_n\to\mu\quad\text{as}\quad n\to\infty.$$
+\subsection{The Central Limit Theorem (CLT)} We know that the fluctuations of $\bar X_n$ around $\mu$ are shrinking, but to do statistical inference, we need more fine-grained information about the distribution of $\bar X_n$. This is where the \emph{Central Limit Theorem} (CLT) comes in. 
+
+To motivate the CLT, note that 
+$$\E\l[\frac{\sqrt n}{\sigma}(\bar X_n - \mu)\r]=0,\quad \V\l[\frac{\sqrt n}{\sigma}(\bar X_n - \mu)\r]=1.$$ (Make sure you can do this calculation). It turns out that this scaled, centered random variable $(\sqrt n/\sigma)(\bar X_n-\mu)$ converges to our favorite distribution which also has mean 0 and variance 1: the normal distribution $\mathcal N(0,1)$. 
+\begin{thm}{Central Limit Theorem}{clt}
+Let $X_i$, $i=1,\dots,n$ be i.i.d. with mean $\mu$ and variance $\sigma^2$. Then
+$$\frac{\sqrt n}{\sigma}(\bar X_n - \mu)\rightsquigarrow\mathcal N(0, 1),$$ where $\rightsquigarrow$ denotes convergence in distribution.
+\end{thm}
+\noindent Convergence in distribution means that for all $a,b$ we have
+$$\mathbb P\l(a\leq\frac{\sqrt n}{\sigma}(\bar X_n - \mu)\leq b\r)\to\mathbb P(a\leq Z\leq b)\quad\text{as}\quad n\to\infty,$$ where $Z\sim\mathcal N(0,1)$.
+\begin{remark}
+Note that $(\sqrt n/\sigma)(\bar X_n-\mu)$ itself need not be normally distributed. For example if $X_i$ is Bernoulli, then it takes value 0 or 1, so $\bar X_n$ will take values in a discrete range: $\{0, 1/n, 2/n,\dots, (n-1)/n, 1\}$, whereas the normal distribution has continuous range. 
+\end{remark}
+\begin{remark}
+If $(\sqrt n/\sigma)(\bar X_n - \mu)\approx\mathcal N(0, 1)$ then \beq\label{CLT2}\bar X_n\approx\mathcal N\l(\mu,\frac{\sigma^2}{n}\r).\eeq This is the form in which we'll typically use the CLT. As a rule of thumb, the approximation is reasonably accurate for $n\geq30$. \end{remark}
+\section{An example}\label{sec:kiss}
+ Do people prefer to turn their heads to the right when they kiss?
+ 
+ In an experiment in \emph{Nature}~\cite{kiss}, $n=124$ couples were observed kissing. 80 of the couples turned their heads to the right when they kissed. That's a proportion of $80/124=0.645$, which is bigger than $0.5$. Can we conclude for sure that humans have a preference to turn to the right? In other words --- is $0.645$ really ``much bigger" than 0.5? Statistics will help us make this quantitative.
+ 
+We model the $n$ couples as $X_i\iid\Ber(p)$, $i=1,\dots, n$, where ``Ber" stands for Bernoulli. Specifically, we let
+$$X_i=\begin{cases}1\quad\text{if turned right},\\
+0\quad\text{if turned left}.
+\end{cases}$$
+Note that $\bar X_n = \frac1n\sum_{i=1}^nX_i$ is precisely the proportion of couples who turned their heads to the right. We have observed $\bar X_n=0.645$. \\
+
+\noindent We now want to know: what is the probability of observing $\bar X_n=0.645$ given that $p=1/2$? If this probability is sizeable, then it is reasonable that $p=1/2$ is the true value of $p$ which generated the data $X_i\sim\Ber(p)$, and we can't conclude that there is a tendency to kiss turning your head to the right. But if the probability is very small, then we can confidently conclude that a right-turning preference does exist. \\
+
+So let's do this computation: first we need the mean and variance of the $X_i$. The mean of $\Ber(p)$ is $p$ and the variance is $p(1-p)$, so if $p=1/2$ then $\mu=\E[X_i]=1/2$ and $\sigma^2=\V[X_i]=1/4$. By the CLT, we then have
+$$\bar X_n\approx\mathcal N\l(\mu, \frac{\sigma^2}{n}\r) = \mathcal N\l(1/2, \frac{1/4}{124}\r)=\mathcal N(0.5, 0.002).$$
+
+\begin{figure}[h]
+    \center
+    \includegraphics[scale=0.1]{Images/density.png}
+\end{figure}
+
+We get $\mathbb P(\bar X_n\geq 0.645)\approx\mathbb P(\mathcal N(0.5, 0.002)\geq0.645)\approx 0.003$. This is what's known as a p-value. Since it's tiny, we can be very confident that $1/2$ is \emph{not} the right value, and that the true value of $p$ is bigger than $1/2$ (meaning, there \emph{is} a preference to turn your head to the right).
+
+\begin{thebibliography}{9}
+\bibitem{kiss}
+Onur G\"{u}nt\"{u}rk\"{u}n. \emph{Adult persistence of head-turning asymmetry}. Nature, 2003
+\end{thebibliography}
+
+\end{document}

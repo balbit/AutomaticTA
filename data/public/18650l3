@@ -1,0 +1,108 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{geometry}%[margin=1.2in]
+\usepackage{amssymb}
+\usepackage{amsthm,bbm,bm}
+\usepackage{epsfig}
+\usepackage{setspace}
+\usepackage{graphicx, xcolor, hyperref, wrapfig, float}
+\setstretch{1.2}
+\geometry{
+    textheight=9in,
+    textwidth=5.5in,
+    top=1in,
+    headheight=12pt,
+    headsep=25pt,
+    footskip=30pt
+}
+\input{commands.tex}
+
+\begin{document}
+
+\lecture{3 --- September 11, 2023}{Fall 2023}{Prof. Philippe Rigollet}{Anya Katsevich}
+\section{Convergence of Random Variables} 
+For a sequence of numbers $x_n$, there is only one meaning of ``$x_n\to x$ as $n\to\infty$". But there are multiple ways that a sequence of random variables $X_n$ can converge to another random variable $X$. Here we go over two types of convergence.
+\begin{defn}{Convergence in probability}{convprob}We say $X_n\stackrel{\mathbb P}{\to}X$ as $n\to\infty$ (in words, ``$X_n$ converges to $X$ in probability") if for every $\epsilon>0$, it holds
+$$\mathbb P(|X_n-X|>\epsilon)\to0\quad\text{as}\quad n\to\infty.$$
+\end{defn}
+\begin{example} Suppose $X_n\sim \Ber(1/2)$ for all $n=1,2,\dots$. Is it true that $X_n\stackrel{\mathbb P}{\to} X\sim\Ber(1/2)$ for some other random variable $X$ that has the same distribution $\Ber(1/2)$? Let's check this, supposing $X$ is independent of $X_n$. Note that $|X_n-X|$ is either 0 or 1. So if we take any $\epsilon\in(0,1)$, the event $\{|X_n-X|>\epsilon\}$ is the same as the event $\{|X_n-X|=1\}$, and this occurs if $X_n=0$ and $X=1$ or if $X_n=1$ and $X=0$. Therefore,
+\beqsn
+\mathbb P(|X_n-X|>\epsilon) &=\mathbb P(\{X_n=1\cap X=0\}\cup\{X_n=0\cap X=1\})\\
+&=\mathbb P(X_n=1,X=0)+\mathbb P(X_n=0,X=1)\\
+& = \frac12\times\frac12+\frac12\times\frac12=\frac12.\eeqsn This does \emph{not} go to zero! So $X_n$ does not converge to $X$ in probability.
+\end{example}
+\begin{defn}{Convergence in distribution}{convdist}
+We say $X_n\rightsquigarrow X$ as $n\to\infty$ (in words, ``$X_n$ converges to $X$ in probability") if 
+$$\mathbb P(X_n\leq x)\to\mathbb P(X\leq x)\quad\text{as}\quad n\to\infty$$ for all $x$ at which the cdf $x\mapsto\mathbb P(X\leq x)$ is continuous. 
+\end{defn}
+\begin{example}Consider the same set-up as the previous example: $X_n\sim\Ber(1/2)$ for all $n$. Then indeed, $X_n\rightsquigarrow\Ber(1/2)$. Here we use the convention of indicating the limit $X$ by its distribution $\Ber(1/2)$.
+\end{example}
+What is the relationship between the two types of convergence? The next theorem shows that convergence in probability is stronger. 
+\begin{thm}{Relationship between convergence types}{thm:rel}
+If $X_n\stackrel{\mathbb P}{\to}X$ then $X_n\rightsquigarrow X$. 
+\end{thm} Note the converse does not hold, as the above two Bernoulli examples demonstrate. 
+CLT uses convergence in distribution. LLN uses convergence in probability. 
+\begin{lma}{convergence to a constant}{relation}
+If $X_n\rightsquigarrow c$ for a deterministic constant $c$, then $X_n\stackrel{\mathbb P}{\to}c$.
+\end{lma}
+\begin{proof}
+\beqsn
+\mathbb P(|X_n-c|>\epsilon) &= \mathbb P(X_n\leq c-\epsilon)+\mathbb P(X_n\geq c+\epsilon)\\
+&\to \mathbb P(X\leq c-\epsilon) + \mathbb P(X\geq c+\epsilon) = 0+0=0,\eeqsn since $X=c$.
+\end{proof}
+\subsection{Operations which preserve convergence}
+\begin{thm}{Convergence of sums and products}{op}
+If $X_n\stackrel{\mathbb P}{\to}X$ and $Y_n\stackrel{\mathbb P}{\to}Y$ then $X_n+Y_n\stackrel{\mathbb P}{\to}X+Y$ and $X_nY_n\stackrel{\mathbb P}{\to}XY$. \\
+
+If $X_n\rightsquigarrow X$ and $Y_n\stackrel{\mathbb P}{\to}c$ then $X_n+Y_n\rightsquigarrow X+c$ and $X_nY_n\rightsquigarrow Xc.$ 
+\end{thm} 
+The second statement is known as Slutsky's Theorem. 
+\begin{remark}In general, $X_n\rightsquigarrow X$ and $Y_n\rightsquigarrow Y$ does \emph{not} imply $X_n+Y_n\rightsquigarrow X+Y$. In fact, a statement like this does not even make sense, as the next example shows. 
+\end{remark}
+\begin{example}
+Suppose $X_n\sim\mathcal N(0,1)$ for all $n$ so $X_n\rightsquigarrow X$ \emph{for any $X$ such that $X\sim\mathcal N(0,1)$}. Next, let $Y_n=-X_n$ for all $n$, so by symmetry of the standard normal, $Y_n\sim\mathcal N(0,1)$ as well. Therefore, $Y_n\rightsquigarrow Y$ \emph{for any $Y\sim\mathcal N(0,1)$}. \\
+
+So does $0=X_n+Y_n$ converge in distribution to $X+Y$? This is true only if $Y=-X$! But it would be equally valid to choose $Y=X$, in which case $0$ does not converge to $X+Y=2X$. The problem is that we have no information about the correlation between the limits $X$ and $Y$, but we need this information to determine the distribution of $X+Y$.
+\end{example}
+
+\begin{thm}{Continuous Mapping Theorem}{cmt}
+If $X_n\stackrel{\mathbb P}{\to}X$ then $g(X_n)\stackrel{\mathbb P}{\to}g(X)$ for continuous functions $g$. Similarly, if $X_n\rightsquigarrow X$ then $g(X_n)\rightsquigarrow g(X)$ for continuous $g$.
+\end{thm}
+\begin{thm}{Delta Method}{del}
+Suppose $\sqrt n(Y_n-\mu)/\sigma\rightsquigarrow Y\sim \mathcal N(0,1)$ for a sequence of random variables $Y_n$. Then for any differentiable $g$ such that $g'(\mu)\neq0$, we have
+$$\frac{\sqrt n}{\sigma}\l(g(Y_n)-g(\mu)\r)\rightsquigarrow\mathcal N(0, g'(\mu)^2).$$
+\end{thm}
+\begin{remark}
+The theorem is typically applied for $Y_n=\bar X_n$ (a sample average). 
+\end{remark}
+\begin{proof}
+We Taylor expand $g$ around the point $\mu$: $g(Y_n)-g(\mu)=g'(\mu)(Y_n-\mu)+\dots$, where the dots represent negligible terms. We multiply both sides by $\sqrt n/\sigma$ to get
+$$
+\frac{\sqrt n}{\sigma}(g(Y_n)-g(\mu))\approx g'(\mu)\l[\frac{\sqrt n}{\sigma}(Y_n-\mu)\r]\rightsquigarrow g'(\mu)Y
+$$ using that the expression in square brackets converges to $Y\sim\mathcal N(0,1)$. But $g'(\mu)Y$ has distribution $\mathcal N(0,g'(\mu)^2)$, and we are done.
+\end{proof}
+
+\section{Slutsky's theorem in statistics: an example} A humble Harvard grad claims that on average, Harvard grads make no more than 120K at graduation. Let's test this hypothesis. Suppose we collect the salaries $X_1,\dots, X_n$ of $n=100$ recent grads, and we find that the sample mean is $\bar X_n=121$K while the sample standard deviation is $\hat\sigma=0.3$K. 
+
+Assume that our model for this data is that $X_1,\dots, X_n$ are i.i.d. with mean $\mu$ and variance $\sigma^2$. We want to know: how likely is it to observe $\bar X_n=121$K if $\mu=120$K? 
+
+By the Central Limit Theorem, $\bar X_n\approx\mathcal N(\mu,\sigma^2/n)$, and we've assumed $\mu=120$K. However, we don't know the true value of $\sigma$. We only have an estimate for it, namely the sample standard deviation $\hat\sigma$. It is tempting to just replace $\sigma$ by $\hat\sigma$ in the CLT, and Slutsky's theorem allows us to do just this:
+
+\beq\label{approxclt}\frac{\sqrt n}{\hat\sigma}\l(\bar X_n - \mu\r) = \l[\frac{\sqrt n}{\sigma}(\bar X_n - \mu)\r]\times \frac{\sigma}{\hat\sigma} \rightsquigarrow \mathcal N(0,1),\eeq because
+\begin{itemize}
+\item $\frac{\sqrt n}{\sigma}(\bar X_n - \mu)\rightsquigarrow\mathcal N(0,1)$ by the CLT, and
+\item $\frac{\sigma}{\hat\sigma}\stackrel{\mathbb P}{\to} 1$ by the LLN, 
+\end{itemize}
+so Slutsky's Theorem (the second part of Theorem~\ref{thm:op}) tells us the product of the two converges in distribution to $\mathcal N(0,1)$. From~\eqref{approxclt} we conclude that
+$$\bar X_n\approx\mathcal N(\mu,\hat\sigma^2/n) = \mathcal N(120, 0.3^2/100).$$
+\begin{figure}[h]
+    \center
+    \vspace{-25pt}
+    \includegraphics[scale=0.15]{Images/density3.png}
+    \end{figure}
+
+We see from the figure that $\bar X_n=121$K is very unlikely under the distribution $\mathcal N(120,0.03^2)$, so we conclude the Harvard grad's claim that the average income is $120$K was an underestimate. 
+
+To see why $\sigma/\hat\sigma$ converges to 1 in probability, note that
+$$\hat\sigma^2:=\frac1n\sum_{i=1}^n(X_i-\bar X_n)^2\approx \frac1n\sum_{i=1}^n(X_i-\mu)^2\stackrel{\mathbb P}{\to}\E[(X_1-\mu)^2]=\sigma^2$$ by the LLN.
+\end{document}
