@@ -85,7 +85,6 @@ def test_query(index, query):
     return response
 
 
-
 def test_retrieval(index, query):
     retriever = index.as_retriever(
         retriever_mode="llm",
@@ -95,12 +94,12 @@ def test_retrieval(index, query):
     response = retriever.retrieve(query)
     return response
 
-def fetch_question_list():
+def fetch_question_list(class_name=18650):
     """
     returns a list of questions from data/questions.json
     """
     import json
-    with open('./data/questions/questions.json') as f:
+    with open(f'./data/questions/{str(class_name)}questions.json') as f:
         questions = json.load(f)
     return questions['questions']
 

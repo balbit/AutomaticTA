@@ -1,12 +1,12 @@
 from llama_index.prompts import PromptTemplate
 from utils import *
-
+import random
 from llama_index.llms import OpenAI
 from llama_index.prompts import PromptTemplate
 import ast
 
-llm = OpenAI(temperature=0.1, model="gpt-4") # Better results, but very slow and expensive
-# llm = OpenAI(temperature=0.1, model="gpt-3.5-turbo")
+# llm = OpenAI(temperature=0.1, model="gpt-4") # Better results, but very slow and expensive
+llm = OpenAI(temperature=0.1, model="gpt-3.5-turbo")
 
 # Create a ServiceContext with the LLM
 service_context = ServiceContext.from_defaults(llm=llm)
@@ -80,19 +80,31 @@ student_vanilla_answer_template = (
 )
 
 
-
 def nodes_to_str(retrieved_nodes):
     return "\n---------------\n".join([f"Context {index}: \n\n" + r.get_content() for index, r in enumerate(retrieved_nodes)])
 
 
-def run_model(query_dict, public_index, private_index, llm):
+def raw_output(query_dict, public_index, llm):
+    title=query_dict['title']
+    question=query_dict['question']
+    use=query_dict['use']
+    public_nodes = test_retrieval(public_index, expert_retrieve_public_template.format(title=title, question=question, use=use))
+
+    raw_answer_prompt = student_vanilla_answer_template.format(context_str=nodes_to_str(public_nodes), 
+                                                           title=title, question=question)
+    raw_answer = llm.complete(raw_answer_prompt) 
+
+    return raw_answer 
+
+
+def run_model(query_dict, public_index, private_index, llm, debug=False):
     """
     query_dict is a dict with the following format:
     {
-        "title": "PSET 4 Question 3",
-        "question": "I would expect $Y_i$ here to follow a Bernoulli distribution since it can only take on two values 0 or 1. However, I am confused on how to define the Bernoulli parameter for $Y_i$. We are given $T_i$ comes from $exp(1)$. I was thinking that $P(Y_i=1)=\\int_{0}^{\\infty}(1-F(t))exp(-t)dt$. Since we would sweep through all possible values of T if $P(Y_i=1)=P(X_i>T_i)=P(X_i>t|T_i=t)\\cdot exp(-t)$. Am I on the right track? Since I don't know $F(t)$ for this problem, I'm not sure if I can leave the parameter definition with the integral in it.",
-        "ta_response": "Yes, you're on the right track! The integral can be further simplified - you'll get an expectation of a function of $X_i$.",
-        "use": "Problem Set 4, Lecture 28 Causal Inference, Recitation 3, Review sheet 2"
+        "title": 
+        "question": 
+        "ta_response": 
+        "use": 
     },
     """
     question = query_dict['question']
@@ -101,15 +113,17 @@ def run_model(query_dict, public_index, private_index, llm):
     private_nodes = test_retrieval(private_index, expert_retrieve_private_template.format(title=title, question=question, use=query_dict['use']))
     public_nodes = test_retrieval(public_index, expert_retrieve_public_template.format(title=title, question=question, use=query_dict['use']))
 
-    print("Private context nodes for the expert:")
-    print(nodes_to_str(private_nodes))
-    print("Public context nodes for the expert:")
-    print(nodes_to_str(public_nodes))
+    if debug:
+        print("Private context nodes for the expert:")
+        print(nodes_to_str(private_nodes))
+        print("Public context nodes for the expert:")
+        print(nodes_to_str(public_nodes))
 
     expert_answer_prompt = expert_answer_template.format(context_str=nodes_to_str(private_nodes + public_nodes), 
                                                          title=title, question=question)
     expert_answer = llm.complete(expert_answer_prompt)
-    print("Expert answer: ", expert_answer)
+    if debug:
+        print("Expert answer: ", expert_answer)
 
     to_student_prompt = to_student_template.format(public_context=nodes_to_str(public_nodes), 
                                                    private_context=nodes_to_str(private_nodes), 
@@ -124,18 +138,20 @@ def run_model(query_dict, public_index, private_index, llm):
         except:
             to_student = llm.complete(to_student_prompt)
     
-    print("To student: ", to_student)
-    best_idx, link = eval(str(to_student))
-    print(best_idx, link)
+    if debug:
+        print("To student: ", to_student)
+        print(best_idx, link)
 
     extra_nodes = test_retrieval(public_index, str(expert_answer))
-#    print("extra nodes: ", extra_nodes)
+    # if debug:
+    #     print("extra nodes: ", extra_nodes)
 
     student_answer_prompt = student_answer_template.format(context_str=nodes_to_str([public_nodes[best_idx]] + extra_nodes), 
                                                            link=link, title=title, question=question)
     student_answer = llm.complete(student_answer_prompt) 
 
-    print("Student answer: ", student_answer)
+    if debug:
+        print("Student answer: ", student_answer)
     return expert_answer, student_answer
 
 
@@ -144,6 +160,40 @@ questions = fetch_question_list()
 public_index = index_from_dir('./data/public_persist')
 private_index = index_from_dir('./data/private_persist')
 
-for q in questions[:1]:
-    print(q)
-    run_model(q, public_index, private_index, llm)
+test_class = "18650"
+
+scores = [0,0,0]
+
+random.shuffle(questions)
+
+for q_idx, q in enumerate(questions):
+    print("Title: ", q['title'])
+    print("Question: \n=============\n: ", q['question'])
+    print("=============\nPlease wait... generating outputs. This might take a few seconds")
+    ta = q['ta_response']
+    ex, stu = run_model(q, public_index, private_index, llm)
+    pub = raw_output(q, public_index, llm)
+    raw = llm.complete(q['question'])
+
+
+#    print("Expert answer: ", ex)
+#    print("Student answer: ", stu)
+#    print("TA answer: ", ta)
+#    print("Public context answer: ", raw)
+#    print("Direct LLM: ", llm.complete(q['question']))
+
+    outputs = [(stu,0), (ta,1), (raw,2)]
+    random.shuffle(outputs)
+    
+    for idx, output in enumerate(outputs):
+        print(f"Output {idx}: ===========")
+        print(output[0])
+        print()
+    
+    for idx in range(3):
+        score = input(f"Score the output for output {idx}: (1-5)")
+        scores[outputs[idx][1]] += int(score)
+
+    print("Model (Student) | TA | Naive LLM")
+    print([s/(1+q_idx) for s in scores])
+

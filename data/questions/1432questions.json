@@ -1,0 +1,51 @@
+{
+    "questions": [{
+"title": "PS2 3c",
+"question": "What is the reason to not also include the 'College' variable (bachelor's or higher) in the regression?",
+"ta_response": "This is due to multicollinearity; the 'College' variable is a linear combination of the other education variables. Intuitively, if you know the value of all the other variables for a person, you already know if they went to college or not (they did if and only if the other education dummies are all zero). You gain no extra information from including the 'College' dummy. Mathematically, the matrix $X'X$ is not invertible when columns are multicollinear. This is a common issue in regression analysis, and it's essential to avoid multicollinearity as it can make it challenging to estimate the individual coefficients of the variables accurately.",
+"use": "Problem set 2, Recitation 2,3 and 4, Lecture 2,4 and 7, Midterm solutions"
+},
+{
+"title": "PS2 2b",
+"question": "I'm curious how we should answer this question without a plot. Not super sure how to determine whether something is homoskedastic just looking at the standard errors. Thanks for the help",
+"ta_response": "You're correct in referencing question 2b on Pset 2. While plots can provide a visual representation of heteroskedasticity, you can still infer the presence of heteroskedasticity without a plot by examining the standard errors. In this case, you can consider the standard errors of the regression coefficients. If the standard errors are relatively consistent across different levels of the independent variable (Income in this case), it suggests homoskedasticity. Conversely, if the standard errors vary significantly as Income changes, it indicates heteroskedasticity. You don't need to see the actual plot; you can base your conclusion on how the standard errors behave relative to the independent variable values.",
+"use": "Problem set 2, Recitation 2,3 and 4, Lecture 2,4 and 7, Midterm solutions"
+},
+{
+"title": "PS3 Q3e",
+"question": "I'm a bit confused on how to approach this question. The statement first says that the effects of tradeshare on growth are negligible, and then it starts talking about the effects of trade on the real GDP? Is it talking about the growth of real GDP (the growth variable) or the rgdp60 variable? If it is the former, would we simply plug in 0.1 and 0.5 for tradeshare and compare the difference in growth, or should we be doing something with the t-statistics/testing something else? Thanks!",
+"ta_response": "By 'a negligible effect on real GDP,' the question still refers to growth since it is growth in GDP! So no need to focus on the rgdp60 variable. Given that the question is talking about the magnitude of the effect in a practical sense, you can focus on economic significance rather than statistical significance. You can indeed plug in the values of tradeshare (0.1 and 0.5) and compare the difference in growth. This will give you a sense of the practical impact of tradeshare on GDP growth as implied by the coefficients in the regression.",
+"use": "Problem set 3, Recitation 5 and 6, Lecture 10, Midterm solutions"
+},
+{
+"title": "PS4 Q1C",
+"question": "In recitation it was mentioned that we 'need to look at the errors' to decide whether to use logit or probit. What is meant by error? Is it the residuals of OLS regression?",
+"ta_response": "Errors are not residuals. Residuals are observed values, given by the difference between your outcome data and your predicted values. Error terms are unobservable, and they are the difference between your data and the linear model if you were to know the true population parameters. For example, knowing that your error terms are normally distributed can be a good reason to pick probit over logit. But in general as econometricians, we do not definitively know the distribution of the error terms. It's mostly a theoretical consideration when choosing between logit and probit.",
+"use": "Problem set 4, Recitation 7, Lecture 13 and 15"
+},
+{
+"title": "Pset 4 2.f",
+"question": "Why are the fitted probabilities the same? I got the exact same distribution, but I'm confused on how to approach this part. Is it because there's only one independent variable?",
+"ta_response": "This is a special case that arises when you have only one independent variable, and that independent variable is also binary. For the problem set, you should explain why this is true. Since you have a binary independent variable, the fitted probabilities for each category of the independent variable will be the same. This is because the logistic regression model estimates a single coefficient for the binary variable, affecting both categories in the same way. So, yes, the fact that you have only one independent variable plays a significant role in why the fitted probabilities are the same for both categories.",
+"use": "Problem set 4, Recitation 7, Lecture 13 and 15"
+},
+{
+"title": "Pset 4 Q2d/e",
+"question": "For question 2d, it is asking for a regression of unem78 on train, but in the previous parts of question 2, we used train as the dependent variable. Is question 2d and 2e asking for train as the independent variable or should it be kept as the dependent variable?",
+"ta_response": "You should be using train as the independent variable in question 2d. The context provided in the setup of the question is, 'The idea is to test whether participation in the job training program had an effect on unemployment probabilities and earnings in 1978.' So, you are testing the effect of 'train' on 'unem78.' In parts a and b, you used 'train' as the dependent variable to explore its relationship with other variables. In part c, you switch the roles and use 'train' as the independent variable to see if it has an effect on 'unem78.' This allows you to examine the causal relationship between training participation and unemployment probabilities.",
+"use": "Problem set 4, Recitation 7, Lecture 13 and 15"
+},
+{
+"title": "Pset 4 Q2c",
+"question": "Hello! For question 2c on the problem set, what would it mean for participation in job training to be treated as exogenous for explaining 1978 unemployment status? How is exogeneity being defined? In parts (a) and (b) of the problem, we seem to test for the joint significance of the variables, which I presume will be used in part (c). If we indeed need to use this information, what does joint significance on variables have to do with exogeneity?",
+"ta_response": "If job training participation is exogenous, it means that it is not correlated with the error term in the regression model explaining 1978 unemployment status. In other words, it is not affected by unobservable factors that could also affect unemployment. Exogeneity is essential because it helps establish a causal relationship. In parts (a) and (b), you are indeed testing for the joint significance of variables, which is related to exogeneity. If 'train' is jointly significant with other variables in explaining unemployment status, it suggests that it has a role in determining unemployment beyond just being correlated with the error term. This would weaken the assumption of exogeneity. So, in part (c), you will likely need to consider these results in the context of exogeneity to draw conclusions about the causal relationship between training participation and unemployment status.",
+"use": "Problem set 4, Recitation 7, Lecture 13 and 15"
+},
+{
+"title": "Pset 5 Question 2c",
+"question": "The wording of the question asks us to look at the effects of unemployment regardless of whether the country is in a recession. If I understand correctly, we can ignore the interaction term (UR X non_rec) while answering this question right?",
+"ta_response": "You are asked to test against the alternative that vote share does matter at least in some years. So you should think about how that interaction term plays in, you can't just ignore it. The interaction term (UR X non_rec) represents the effect of unemployment rate on vote share during non-recession years. While the question focuses on the overall effects of unemployment regardless of the recession, you should still consider the interaction term because it provides information about how unemployment affects vote share specifically in non-recession years. Ignoring it may lead to an incomplete analysis of the relationship between unemployment and vote share in different contexts.",
+"use": "Problem set 5, Lecture 17"
+}
+]
+}
