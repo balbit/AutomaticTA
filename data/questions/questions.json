@@ -1,0 +1,51 @@
+{"questions": [
+    {
+        "title": "PSET 4 Question 3",
+        "question": "I would expect $Y_i$ here to follow a Bernoulli distribution since it can only take on two values 0 or 1. However, I am confused on how to define the Bernoulli parameter for $Y_i$. We are given $T_i$ comes from $exp(1)$. I was thinking that $P(Y_i=1)=\\int_{0}^{\\infty}(1-F(t))exp(-t)dt$. Since we would sweep through all possible values of T if $P(Y_i=1)=P(X_i>T_i)=P(X_i>t|T_i=t)\\cdot exp(-t)$. Am I on the right track? Since I don't know $F(t)$ for this problem, I'm not sure if I can leave the parameter definition with the integral in it.",
+        "ta_response": "Yes, you're on the right track! The integral can be further simplified - you'll get an expectation of a function of $X_i$.",
+        "use": "Problem Set 4, Lecture 28 Causal Inference, Recitation 3, Review sheet 2"
+    },
+    {
+        "title": "PSET 4 Question 6.4",
+        "question": "For 6.4, do we assume t is $T_i$ with distribution $Exp(1)$ AND that $X_i$ had distribution $Exp(\\beta)$ or just the second assumption?",
+        "ta_response": "You assume both $T_i∼Exp(1)$ needed for the definition of the $Y_i$",
+        "use": "Problem Set 4, Lecture 27 Survival Analysis, Recitation 3, Review sheet 2"
+    },
+    {
+        "title": "PSET 4 Question 2.3",
+        "question": "I'm not really sure how to approach this question. I don't know how to show that $(\\beta_0, \\beta_1)$ is supposed to be distributed as a multivariate Gaussian. Why are the Bayesian updates of a non-informative prior leading to this distribution?",
+        "ta_response": "If you apply the Bayes rule and just set the prior equal to one (fix the normalization afterwards), you'll see that the posterior is a multivariate gaussian.",
+        "use": "Problem Set 4, Lecture 20 and 21 Bayesian Inference, Recitation 2, Review sheet 2"
+    },
+    {
+        "title": "PSET 3 Question 5",
+        "question": "I'm still not sure how exactly we are expected to approach part 1). The part I am confused about is that for each TA, there are 2 unknowns. a) The probability a student gets an A without a TA and b) The probability the student gets an A with the TA, and we are interested in if b) is bigger than a). One simple approach I was considering was i) Assume that the probability a student gets an A without a TA is exactly 55/80, and for each TA assume that the student of the TA gets an A with a distribution Ber(p) and just consider null hypothesis p <= 55/80 and alternate hypothesis p > 55/80. This however completely neglects that we don't exactly know the probability of an A without a TA. A second approach I was considering was ii) Assume that a student without TA gets A with distribution Ber(p_1) and a student with a particular TA gets A with distribution Ber(p_2) and consider null hypothesis p_2 <= p_1 and alternate hypothesis p_2 > p_1. If I proceed with this however, I'm not sure how exactly parts 2 and 3 will work. Are either of these on the right track?",
+        "ta_response": "The second approach is pretty much what we're looking for! Just a note that parts 2 and 3 will follow from part 1 regardless of how you approached part 1 since all you need for the Bonferonni correction/FDR method are the p-values themselves for each of your four tests. As for part 1, I would consider looking in the textbook (which has examples that are quite similar to what this problem is asking) for inspiration; you should be able to create a test statistic that accounts for the two unknown proportions.",
+        "use": "Problem Set 3, Lecture 19 Multiple Hypothesis tests, Recitation 2, Review sheet 2"
+    },
+    {
+        "title": "PSET 3 Question 1.1",
+        "question": "I know that $X_i$ is drawn from a continuous distribution, so my instinct is that this probability is 0. However, I was also thinking of defining $Y(i,j)=X_i−X_j$. Y is the difference between two Gaussian normal random variables, so it is also Gaussian centered around 0. The probability that Y is 0 can be determined from the normal PDF, and it is non-zero. How do I reason about this?",
+        "ta_response": "The probability that Y is 0 can be determined from the normal pdf and is indeed 0. If the CDF of some distribution is continuous, the probability of drawing any particular fixed value is 0. Note the $P(Y=y)$ is _not_ equal to f(y) if the pdf is f.",
+        "use": "Problem Set 3, Lecture 13 Bootstrap, Recitation 2, Review sheet 2"
+    },
+    {
+        "title": "Pset 3 Q1.9",
+        "question": "If we are using Bernoulli RV $B_i$ with a condition in 1.5, then what are we doing in 1.9? In 1.9 the case is unconditional, so the parameter p of Bernoulli should change, right? Or do we still use $B_i ~Ber(p)$ with the same p of problem 1.5?",
+        "ta_response": "In 1.9 we are indeed considering the unconditional case. Part 1.5 is a bit ambiguously stated so if you want to be safe you could write the answer both for the conditional and unconditional case. But I believe the intention of 1.5 was to consider the conditional case.",
+        "use": "Problem Set 3, Lecture 12 and 13 Bootstrap, Recitation 2, Review sheet 2"
+    },
+    {
+        "title": "Pset2 Problem 9.3",
+        "question": "What should I prove that MLE actually maximizes the likelihood function? Show it is indeed 'maximize' rather than 'minimize' by checking the second derivative?",
+        "ta_response": "You could do that, but it would only show that the point is a local max rather than a local min. We need to show it's a global max. What kind of functions satisfy the property that a critical point is automatically a global maximizer?",
+        "use": "Problem Set 2, Lecture 8,9,10+11 MLE, Recitation 1.2, Review sheet 1"
+    },
+    {
+        "title": "Pset 2 Problem 8",
+        "question": "I was able to get the three weight values that correspond to the appropriates ranges in $\\theta_k$. For the maximization step to compute $\\theta_1$ given that we have $\\theta_0$ being 3, for the given observables, I find that they all get the same weight out of three I compute such that all points get assigned to the first component of the pdf which is $Unif(0,2\\theta)$. In this case, I can compute $\\theta_1$. However, with the $\\theta_1$ I get, my weights are now no longer the same value but a mix of 2/3 of the weights that I obtain, such that in some cases, all points come from the first component while in some cases, they could come from either component. I am now confused how to proceed to get $\\theta_2$. My likelihood function is still the same as that I got in computing $\\theta_1$ since both Uniform distributions yield a similar pdf for different ranges in $\\theta$. However, I'm not sure how to go about inferring the MLE when I have a mixture of Uniform distributions.",
+        "ta_response": "Technically the weights should correspond to the second component following conventions in the crab example but this doesn't matter too much (just a difference in indexing). Right okay on the mixed weights -- what you want to do is to consider the total probability expression over the two components, for each datapoint. Note that when you do the E-step, the expectation that you're maximizing is considering over all the datapoints -- so you'll have two different kinds of logf(⋅) expressions, one for each weighting, and each one maximized by a different set of $\\theta$ constraints. All of the summed makes the expectation in the E-step that you want to maximize -- maximize them separately in their cases to get the overall maximum. Take the system of constraints to get your θ. Hopefully that is helpful. If it doesn't make sense, look at the EM algorithm description in the book and you'll see that the E-step is over all of the datapoints.",
+        "use": "Problem Set 2, Lecture 8,9,10+11 MLE, Recitation 1.2, Review sheet 1"
+    }
+]
+}

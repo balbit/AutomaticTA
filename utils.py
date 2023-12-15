@@ -2,6 +2,7 @@
 from llama_index import ServiceContext, VectorStoreIndex, SimpleDirectoryReader
 from llama_index.embeddings import OpenAIEmbedding
 from llama_index import StorageContext, load_index_from_storage, set_global_service_context
+from llama_index.indices.list import SummaryIndexLLMRetriever
 from tqdm import tqdm
 import shutil
 import os
@@ -32,6 +33,10 @@ def add_to_index(dir_from, dir_to, persist_dir, was_persisted=True):
 
     Then moves all files from dir_from to dir_to
     """
+    if not os.listdir(dir_from):
+        print("Folder is empty.")
+        return
+
     if was_persisted:
         # Load the index from storage
         index = index_from_dir(persist_dir)
@@ -64,7 +69,6 @@ def update_public_data(was_persisted=True):
 
 def update_private_data(was_persisted=True):
     # Not implemented yet: private data is not ready to use
-    raise NotImplementedError
 
     print("Updating private data...")
     add_to_index("./data/private_new", "./data/private", './data/private_persist', was_persisted)
@@ -80,9 +84,39 @@ def test_query(index, query):
     print(response)
     return response
 
-# update_public_data(False)
+
+
+def test_retrieval(index, query):
+    retriever = index.as_retriever(
+        retriever_mode="llm",
+        choice_batch_size=5,
+    )
+
+    response = retriever.retrieve(query)
+    return response
+
+def fetch_question_list():
+    """
+    returns a list of questions from data/questions.json
+    """
+    import json
+    with open('./data/questions/questions.json') as f:
+        questions = json.load(f)
+    return questions['questions']
+
+
+# update_public_data(True)
+# update_private_data(False)
 
 # public_index = index_from_dir('./data/public_persist')
-# test_query(public_index, 'Summarize the example of Slutsky\'s theorem that is given. Which lecture (1-3) is it from?')
+# retrieved = test_retrieval(public_index, 'Summarize the example of Slutsky\'s theorem that is given. Which lecture (1-3) is it from?')
+# # print(retrieved)
+# 
+# print(type(retrieved))
+# 
+# for ele in retrieved:
+#     print("-----")
+#     print()
+#     print(ele)
 
-# test_query("What is the lln, according to the lectures, and which lecture is it from?")
+# test_query(public_index, "What is the lln, according to the lectures, and which lecture is it from?")
