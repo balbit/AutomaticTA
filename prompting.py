@@ -175,7 +175,7 @@ def test():
     print("Public context answer: ", pub)
     print("Direct LLM: ", llm.complete(q['question']))
 
-test()
+# test()
 
 def run_test(test_class="1432"):
     questions = fetch_question_list(test_class)
@@ -206,3 +206,4 @@ def run_test(test_class="1432"):
         print("Model (Student) | TA | Naive LLM")
         print([s/(1+q_idx) for s in scores])
 
+run_test()
