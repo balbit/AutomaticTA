@@ -24,24 +24,26 @@ export OPENAI_API_KEY=XXXXX
 
 ## Usage
 
-Important functions are currently in test.py
+Important functions are currently in utils.py and prompting.py
 
 ### Adding Documents
 
-To add documents to the public dataset, add them to the directory public_new (only text is supported right now)
+To add documents to the public dataset, add them to the directory data/public_new and data/private_new (text and pdf are both supported!)
 
-Then run `update_public_data(True)` in test.py. This should automatically move the files to from public_new to public_data after storing the embeddings in public_persist.
+Then run `update_public_data(True)` and `update_private_data(True)` in utils.py. 
 
-If something breaks, move all files to public_new and run `update_public_data(False)` to reindex everything.
+This should automatically move the files to from public_new to public_data after storing the embeddings in public_persist.
 
-### Querying
+If something breaks or you want to train with a different set of data (eg for another class), move all desired files to public_new/private_new and run `update_public_data(False)` `update_private_data(False)` to reindex everything.
 
-Example of a query:
-```
-public_index = index_from_dir('./data/public_persist')
-test_query(public_index, 'Summarize the example of Slutsky\'s theorem that is given. Which lecture (1-3) is it from?')
-test_query(public_index, 'What is the question being answered by the kiss experiment?')
-```
+### Running the Tester
+
+To recreate our testing environment, first
+
+1. Copy relevant context files to data/public_new and data/private_new. Class materials we used (except for 6.009 because of uploading difficulties) can be found in https://github.com/heale04/AutoTADATA
+2. Add documents by running the script
+3. Change the test_class variable to the class name prefix of your new batch of data
+4. run `python3 prompting.py` in the root folder!
 
 ## License
 
