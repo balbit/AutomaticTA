@@ -1,5 +1,6 @@
 {
-    "questions": [{
+    "questions": [
+        {
 "title": "PS2 3c",
 "question": "What is the reason to not also include the 'College' variable (bachelor's or higher) in the regression?",
 "ta_response": "This is due to multicollinearity; the 'College' variable is a linear combination of the other education variables. Intuitively, if you know the value of all the other variables for a person, you already know if they went to college or not (they did if and only if the other education dummies are all zero). You gain no extra information from including the 'College' dummy. Mathematically, the matrix $X'X$ is not invertible when columns are multicollinear. This is a common issue in regression analysis, and it's essential to avoid multicollinearity as it can make it challenging to estimate the individual coefficients of the variables accurately.",

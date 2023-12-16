@@ -5,8 +5,8 @@ from llama_index.llms import OpenAI
 from llama_index.prompts import PromptTemplate
 import ast
 
-# llm = OpenAI(temperature=0.1, model="gpt-4") # Better results, but very slow and expensive
-llm = OpenAI(temperature=0.1, model="gpt-3.5-turbo")
+llm = OpenAI(temperature=0.1, model="gpt-4") # Better results, but very slow and expensive
+# llm = OpenAI(temperature=0.1, model="gpt-3.5-turbo")
 
 # Create a ServiceContext with the LLM
 service_context = ServiceContext.from_defaults(llm=llm)
@@ -48,7 +48,7 @@ to_student_template = (
     "{answer}"
     "\n---------------------\n"
     "You are a helpful agent giving students a hint without revealing the answer.\n"
-    "Given the correct answer and potentially relevant context, output the 0-index of the most useful public context, and a link to a helpful resource.\n"
+    "Given the correct answer and potentially relevant context, output the 0-index of the most useful public context, and a link to a helpful resource that isn't already directly mentioned in the public context.\n"
     "Example Output: (2, 'https://en.wikipedia.org/wiki/Newton%27s_laws_of_motion')\n"
     "Example Output 2: (0, 'https://math.stackexchange.com/questions/265917/intuitive-explanation-of-a-definition-of-the-fisher-information')\n"
     "Output:"
@@ -143,8 +143,10 @@ def run_model(query_dict, public_index, private_index, llm, debug=False):
         print(best_idx, link)
 
     extra_nodes = test_retrieval(public_index, str(expert_answer))
-    # if debug:
-    #     print("extra nodes: ", extra_nodes)
+    if debug:
+        print("Extra nodes for the student: ===========\n")
+        for node in extra_nodes:
+            print(node.get_content())
 
     student_answer_prompt = student_answer_template.format(context_str=nodes_to_str([public_nodes[best_idx]] + extra_nodes), 
                                                            link=link, title=title, question=question)
@@ -155,45 +157,52 @@ def run_model(query_dict, public_index, private_index, llm, debug=False):
     return expert_answer, student_answer
 
 
-questions = fetch_question_list()
 
 public_index = index_from_dir('./data/public_persist')
 private_index = index_from_dir('./data/private_persist')
 
-test_class = "18650"
-
-scores = [0,0,0]
-
-random.shuffle(questions)
-
-for q_idx, q in enumerate(questions):
-    print("Title: ", q['title'])
-    print("Question: \n=============\n: ", q['question'])
-    print("=============\nPlease wait... generating outputs. This might take a few seconds")
+def test():
+    questions = fetch_question_list("1432")
+    q = questions[0]
     ta = q['ta_response']
-    ex, stu = run_model(q, public_index, private_index, llm)
+    ex, stu = run_model(q, public_index, private_index, llm, debug=True)
     pub = raw_output(q, public_index, llm)
     raw = llm.complete(q['question'])
 
+    print("Expert answer: ", ex)
+    print("Student answer: ", stu)
+    print("TA answer: ", ta)
+    print("Public context answer: ", pub)
+    print("Direct LLM: ", llm.complete(q['question']))
 
-#    print("Expert answer: ", ex)
-#    print("Student answer: ", stu)
-#    print("TA answer: ", ta)
-#    print("Public context answer: ", raw)
-#    print("Direct LLM: ", llm.complete(q['question']))
+test()
 
-    outputs = [(stu,0), (ta,1), (raw,2)]
-    random.shuffle(outputs)
-    
-    for idx, output in enumerate(outputs):
-        print(f"Output {idx}: ===========")
-        print(output[0])
-        print()
-    
-    for idx in range(3):
-        score = input(f"Score the output for output {idx}: (1-5)")
-        scores[outputs[idx][1]] += int(score)
+def run_test(test_class="1432"):
+    questions = fetch_question_list(test_class)
+    scores = [0,0,0]
+    random.shuffle(questions)
 
-    print("Model (Student) | TA | Naive LLM")
-    print([s/(1+q_idx) for s in scores])
+    for q_idx, q in enumerate(questions):
+        print("Title: ", q['title'])
+        print("Question: \n=============\n: ", q['question'])
+        print("=============\nPlease wait... generating outputs. This might take a few seconds")
+        ta = q['ta_response']
+        ex, stu = run_model(q, public_index, private_index, llm)
+        pub = raw_output(q, public_index, llm)
+        raw = llm.complete(q['question'])
+
+        outputs = [(stu,0), (ta,1), (raw,2)]
+        random.shuffle(outputs)
+        
+        for idx, output in enumerate(outputs):
+            print(f"Output {idx}: ===========")
+            print(output[0])
+            print()
+        
+        for idx in range(3):
+            score = input(f"Score the output for output {idx}: (1-5)")
+            scores[outputs[idx][1]] += int(score)
+
+        print("Model (Student) | TA | Naive LLM")
+        print([s/(1+q_idx) for s in scores])
 

@@ -1,5 +1,17 @@
 {"questions": [
     {
+        "title": "PSET 3 Question 5",
+        "question": "I'm still not sure how exactly we are expected to approach part 1). The part I am confused about is that for each TA, there are 2 unknowns. a) The probability a student gets an A without a TA and b) The probability the student gets an A with the TA, and we are interested in if b) is bigger than a). One simple approach I was considering was i) Assume that the probability a student gets an A without a TA is exactly 55/80, and for each TA assume that the student of the TA gets an A with a distribution Ber(p) and just consider null hypothesis p <= 55/80 and alternate hypothesis p > 55/80. This however completely neglects that we don't exactly know the probability of an A without a TA. A second approach I was considering was ii) Assume that a student without TA gets A with distribution Ber(p_1) and a student with a particular TA gets A with distribution Ber(p_2) and consider null hypothesis p_2 <= p_1 and alternate hypothesis p_2 > p_1. If I proceed with this however, I'm not sure how exactly parts 2 and 3 will work. Are either of these on the right track?",
+        "ta_response": "The second approach is pretty much what we're looking for! Just a note that parts 2 and 3 will follow from part 1 regardless of how you approached part 1 since all you need for the Bonferonni correction/FDR method are the p-values themselves for each of your four tests. As for part 1, I would consider looking in the textbook (which has examples that are quite similar to what this problem is asking) for inspiration; you should be able to create a test statistic that accounts for the two unknown proportions.",
+        "use": "Problem Set 3, Lecture 19 Multiple Hypothesis tests, Recitation 2, Review sheet 2"
+    },
+    {
+        "title": "PSET 4 Question 2.3",
+        "question": "I'm not really sure how to approach this question. I don't know how to show that $(\\beta_0, \\beta_1)$ is supposed to be distributed as a multivariate Gaussian. Why are the Bayesian updates of a non-informative prior leading to this distribution?",
+        "ta_response": "If you apply the Bayes rule and just set the prior equal to one (fix the normalization afterwards), you'll see that the posterior is a multivariate gaussian.",
+        "use": "Problem Set 4, Lecture 20 and 21 Bayesian Inference, Recitation 2, Review sheet 2"
+    },
+    {
         "title": "PSET 4 Question 3",
         "question": "I would expect $Y_i$ here to follow a Bernoulli distribution since it can only take on two values 0 or 1. However, I am confused on how to define the Bernoulli parameter for $Y_i$. We are given $T_i$ comes from $exp(1)$. I was thinking that $P(Y_i=1)=\\int_{0}^{\\infty}(1-F(t))exp(-t)dt$. Since we would sweep through all possible values of T if $P(Y_i=1)=P(X_i>T_i)=P(X_i>t|T_i=t)\\cdot exp(-t)$. Am I on the right track? Since I don't know $F(t)$ for this problem, I'm not sure if I can leave the parameter definition with the integral in it.",
         "ta_response": "Yes, you're on the right track! The integral can be further simplified - you'll get an expectation of a function of $X_i$.",
@@ -10,18 +22,6 @@
         "question": "For 6.4, do we assume t is $T_i$ with distribution $Exp(1)$ AND that $X_i$ had distribution $Exp(\\beta)$ or just the second assumption?",
         "ta_response": "You assume both $T_i∼Exp(1)$ needed for the definition of the $Y_i$",
         "use": "Problem Set 4, Lecture 27 Survival Analysis, Recitation 3, Review sheet 2"
-    },
-    {
-        "title": "PSET 4 Question 2.3",
-        "question": "I'm not really sure how to approach this question. I don't know how to show that $(\\beta_0, \\beta_1)$ is supposed to be distributed as a multivariate Gaussian. Why are the Bayesian updates of a non-informative prior leading to this distribution?",
-        "ta_response": "If you apply the Bayes rule and just set the prior equal to one (fix the normalization afterwards), you'll see that the posterior is a multivariate gaussian.",
-        "use": "Problem Set 4, Lecture 20 and 21 Bayesian Inference, Recitation 2, Review sheet 2"
-    },
-    {
-        "title": "PSET 3 Question 5",
-        "question": "I'm still not sure how exactly we are expected to approach part 1). The part I am confused about is that for each TA, there are 2 unknowns. a) The probability a student gets an A without a TA and b) The probability the student gets an A with the TA, and we are interested in if b) is bigger than a). One simple approach I was considering was i) Assume that the probability a student gets an A without a TA is exactly 55/80, and for each TA assume that the student of the TA gets an A with a distribution Ber(p) and just consider null hypothesis p <= 55/80 and alternate hypothesis p > 55/80. This however completely neglects that we don't exactly know the probability of an A without a TA. A second approach I was considering was ii) Assume that a student without TA gets A with distribution Ber(p_1) and a student with a particular TA gets A with distribution Ber(p_2) and consider null hypothesis p_2 <= p_1 and alternate hypothesis p_2 > p_1. If I proceed with this however, I'm not sure how exactly parts 2 and 3 will work. Are either of these on the right track?",
-        "ta_response": "The second approach is pretty much what we're looking for! Just a note that parts 2 and 3 will follow from part 1 regardless of how you approached part 1 since all you need for the Bonferonni correction/FDR method are the p-values themselves for each of your four tests. As for part 1, I would consider looking in the textbook (which has examples that are quite similar to what this problem is asking) for inspiration; you should be able to create a test statistic that accounts for the two unknown proportions.",
-        "use": "Problem Set 3, Lecture 19 Multiple Hypothesis tests, Recitation 2, Review sheet 2"
     },
     {
         "title": "PSET 3 Question 1.1",

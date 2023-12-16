@@ -105,7 +105,7 @@ def fetch_question_list(class_name=18650):
 
 
 # update_public_data(True)
-# update_private_data(False)
+# update_private_data(True)
 
 # public_index = index_from_dir('./data/public_persist')
 # retrieved = test_retrieval(public_index, 'Summarize the example of Slutsky\'s theorem that is given. Which lecture (1-3) is it from?')
